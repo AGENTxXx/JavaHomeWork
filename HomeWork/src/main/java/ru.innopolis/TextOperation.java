@@ -4,27 +4,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import static ru.innopolis.ConstantClass.*;
 /**
  * Created by Alexander Chuvashov on 10.11.2016.
  */
 
-class FileOperation implements ITextOperation {
-    ThreadMonitor monitor;
-    String pattern;
-    String replacePattern = "(?U)[\\pP\\s\\d\\�\\<\\>\\№\\-\\+]";
-
-
-    public FileOperation(ThreadMonitor monitor, String pattern) {
-        this.monitor = monitor;
-        this.pattern = pattern;
-    }
-
-    public FileOperation(ThreadMonitor monitor, String pattern, String replacePattern) {
-        this.monitor = monitor;
-        this.pattern = pattern;
-        this.replacePattern = replacePattern;
-    }
+class TextOperation implements ITextOperation {
 
     /**
      * Метод проверяет корректность слова через regex выражение и в случае корректности
@@ -34,17 +19,16 @@ class FileOperation implements ITextOperation {
      */
     public boolean checkWord(String word) {
         word = word.toLowerCase();
-        word = word.replaceAll(replacePattern, "");
+        word = word.replaceAll(REPLACE_PATTERN, "");
         if (word.length() > 0) {
-            if (word.matches(pattern)) {
-                synchronized (monitor) {
-                    if (monitor.isInterrupted()) {
-                        Thread.interrupted();
-                    }
-                    Long check = Main.m.get(word);
-                    Main.m.put(word, check == null ? 1 : check + 1);
-                    return true;
+            if (word.matches(CORRECT_PATTERN)) {
+                if (MONITOR.isInterrupted()) {
+                    Thread.interrupted();
                 }
+
+                Long check = Main.m.get(word);
+                Main.m.put(word, check == null ? 1 : check + 1);
+                return true;
             }
             else {
                 return false;
@@ -59,7 +43,7 @@ class FileOperation implements ITextOperation {
      * @return LinkedList<String> - содержит список слов полученных из строки s
      */
     public LinkedList<String> textWordSplit(String s) {
-        return new LinkedList<String>(Arrays.asList(s.replaceAll("[\n\r\t]"," ").split(" ")));
+        return new LinkedList<>(Arrays.asList(s.replaceAll("[\n\r\t]"," ").split(" ")));
     }
 
     /**
@@ -67,9 +51,9 @@ class FileOperation implements ITextOperation {
      * @param s - строка для проверки
      * @return boolean - ture, если присутствует(ют) латинский символ(ы), false - в ином случае
      */
-    public boolean isExistIllegalSymbols(String s, String illegalPattern) {
+    public boolean isExistIllegalSymbols(String s) {
 
-        Pattern p = Pattern.compile(illegalPattern);
+        Pattern p = Pattern.compile(ILLEGAL_PATTERN);
         Matcher m = p.matcher(s);
         return m.find();
     }

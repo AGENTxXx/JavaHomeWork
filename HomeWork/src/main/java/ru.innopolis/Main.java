@@ -4,26 +4,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+import static ru.innopolis.ConstantClass.*;
 /**
  * Created by Chuvashvo Alexander on 04.11.2016.
  */
 
-
-
-
 public class Main {
-    static Map<String, Long> m = new HashMap<>();
+
+    /*Храним количество повторений слов в проверяемых файлах*/
+    static Map<String, Long> m = new ConcurrentHashMap<>();
     private static Logger logger = LoggerFactory.getLogger("ru.innopolis.Main");
 
     public static void main(String[] args)  {
-        //List<String> paths = new ArrayList<>();
-        ThreadManager tm = new ThreadManager();
-        ThreadMonitor monitor = new ThreadMonitor();
-
-        String pattern = "[а-яё]*";
-        String illegalPattern = "[a-zA-Z]";
-
+        ThreadManager threadManager = new ThreadManager();
 
         if (args.length == 0) {
             logger.info("Загружаемые файлы не указаны!");
@@ -31,26 +26,28 @@ public class Main {
         }
 
         for (String arg: args) {
-            //tm.addThread(new Thread(new FileManager(monitor,arg,pattern,illegalPattern,10000)));
-            tm.addThread(new Thread(new FileManager(monitor,arg,pattern,illegalPattern)));
+            threadManager.addThread(new Thread(new FileManager(arg)));
         }
 
-        tm.runAllThreads();
-        tm.showRunStatistic(monitor,100,m);
+        threadManager.runAllThreads();
+        threadManager.showRunStatistic(5000,m);
         try {
-            tm.waitEndThreads();
+            threadManager.waitEndThreads();
         } catch (InterruptedException e) {
-            logger.error("Ошибка прерывания потока!", e.getStackTrace());
+            logger.error("Ошибка прерывания потока!", e);
         }
 
-        if (monitor.isInterrupted()) {
-            logger.error(monitor.getErrorInterrupted());
-            logger.error(monitor.getFileError());
-            logger.error("Trace \r\n {}",monitor.getErrorExeption());
+        if (MONITOR.isInterrupted()) {
+            logger.error(MONITOR.getErrorInterrupted());
+            logger.error(MONITOR.getFileError());
+            if (MONITOR.getErrorExeption() != null) {
+                logger.error("Trace \r\n {}",MONITOR.getErrorExeption());
+            }
+
         }
         else {
             logger.info("Полученный результат \r\n{}", m);
-            monitor.setDone(true);
+            MONITOR.setDone(true);
         }
     }
 }

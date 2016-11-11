@@ -1,19 +1,29 @@
 package ru.innopolis;
 
+import static ru.innopolis.ConstantClass.*;
 /**
  * Created by Alexander Chuvashov on 10.11.2016.
  */
-class ThreadMonitor {
-    private boolean interrupted = false;
+class ThreadMonitor implements IThreadMonitor {
+
+    private volatile boolean interrupted = false;
     private String errorInterrupted;
     private String fileError;
-    private Exception errorExeption;
+    private Exception errorException;
     private boolean done = false;
 
+    /**
+     * Метод проверяет, завершились ли все вычислительные потоки
+     * @return true, если потоки завершились, false - если ещё не завершились
+     */
     public boolean isDone() {
         return done;
     }
 
+    /**
+     * Метод устанавливает значение указывающее на завершенность всех вычислительных потоков
+     * @param done - true, если все вычислительные потоки завершиилсь, false - в противном случае
+     */
     public void setDone(boolean done) {
         this.done = done;
     }
@@ -24,13 +34,13 @@ class ThreadMonitor {
      * устанавливает указатель на то, чтобы все отсальные вычислительные потоки прервались
      * @param fileError - путь до ошибочного файла
      * @param errorInterrupted - причина ошибки/перывания
-     * @param errorExeption - объект системной ошибки
      */
-    public void setErrorSettings(String fileError, String errorInterrupted, Exception errorExeption) {
+    public void setErrorSettings(String fileError, String errorInterrupted) {
         this.fileError = fileError;
         this.errorInterrupted = errorInterrupted;
-        this.errorExeption = errorExeption;
-        interrupted = true;
+        synchronized (MONITOR) {
+            this.interrupted = true;
+        }
     }
 
     /**
@@ -38,16 +48,16 @@ class ThreadMonitor {
      * устанавливает указатель на то, чтобы все отсальные вычислительные потоки прервались
      * @param fileError - путь до ошибочного файла
      * @param errorInterrupted - причина ошибки/перывания
+     * @param errorException - объект системной ошибки
      */
-    public void setErrorSettings(String fileError, String errorInterrupted) {
-        this.fileError = fileError;
-        this.errorInterrupted = errorInterrupted;
-        interrupted = true;
+    public void setErrorSettings(String fileError, String errorInterrupted, Exception errorException) {
+        setErrorSettings(fileError,errorInterrupted);
+        this.errorException = errorException;
     }
 
     /**
      * Метод возвращает ошибку прерывания
-     * @return String
+     * @return String - переменная с пояснением произошедшей ошибки
      */
     public String getErrorInterrupted() {
         return errorInterrupted;
@@ -63,19 +73,19 @@ class ThreadMonitor {
 
     /**
      * Метод возвращает пудь до файла
-     * @return String
+     * @return String - переменная с путём файла
      */
     public String getFileError() {
         return fileError;
     }
 
     /**
-     * Метод возвращает системную ошибку
-     * @return Exception
+     * Метод возвращает программную ошибку или null, если ошибки не было
+     * @return Exception - программная ошибка при вычислении
      */
     public Exception getErrorExeption() {
-        if (errorExeption != null) {
-            return errorExeption;
+        if (errorException != null) {
+            return errorException;
         }
         else {
             return null;

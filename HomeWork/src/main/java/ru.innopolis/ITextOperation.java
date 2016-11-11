@@ -8,5 +8,5 @@ import java.util.LinkedList;
 public interface ITextOperation {
     boolean checkWord(String word);
     LinkedList<String> textWordSplit(String s);
-    boolean isExistIllegalSymbols(String s, String illegalPattern);
+    boolean isExistIllegalSymbols(String s);
 }

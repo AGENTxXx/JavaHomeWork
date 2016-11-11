@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.innopolis.HelloWorldTest" tests="2" skipped="1" failures="0" errors="0" timestamp="2016-11-11T13:04:38" hostname="AGENTxXx" time="0.012">
+  <properties/>
+  <testcase name="sumTest" classname="ru.innopolis.HelloWorldTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <testcase name="testDoSome" classname="ru.innopolis.HelloWorldTest" time="0.007"/>
+  <system-out><![CDATA[log4j: Parsing for [root] with value=[ERROR, errorAppender].
+log4j: Level token is [ERROR].
+log4j: Category root set to ERROR
+log4j: Parsing appender named "errorAppender".
+log4j: Parsing layout options for "errorAppender".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} [%-5p][%-16.16t][%20c{-2}] - %m%n].
+log4j: End of parsing for "errorAppender".
+log4j: Setting property [file] to [errors.log].
+log4j: Setting property [threshold] to [ERROR].
+log4j: setFile called: errors.log, true
+log4j: setFile ended
+log4j: Parsed "errorAppender" options.
+log4j: Filter key: [log4j.appender.errorAppender.filter.a] class: [org.apache.log4j.varia.LevelMatchFilter] props: [AcceptOnMatch=true, LevelToMatch=ERROR]
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Setting property [levelToMatch] to [ERROR].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelMatchFilter] to appender named [errorAppender].
+log4j: Parsing for [ru.innopolis.HelloWorldTest] with value=[INFO, consoleAppender].
+log4j: Level token is [INFO].
+log4j: Category ru.innopolis.HelloWorldTest set to INFO
+log4j: Parsing appender named "consoleAppender".
+log4j: Parsing layout options for "consoleAppender".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} [%-5p][%-16.16t][%30c] - %m%n].
+log4j: End of parsing for "consoleAppender".
+log4j: Parsed "consoleAppender" options.
+log4j: Handling log4j.additivity.ru.innopolis.HelloWorldTest=[null]
+log4j: Finished configuring.
+2016-11-11 16:04:38,233 [INFO ][Test worker     ][   ru.innopolis.HelloWorldTest] - This is beforeClass Method1
+2016-11-11 16:04:38,249 [INFO ][Test worker     ][   ru.innopolis.HelloWorldTest] - This is @Before method1
+2016-11-11 16:04:38,249 [INFO ][Test worker     ][   ru.innopolis.HelloWorldTest] - This is testHandel method1
+2016-11-11 16:04:38,250 [INFO ][Test worker     ][   ru.innopolis.HelloWorldTest] - This is @After method1
+2016-11-11 16:04:38,255 [INFO ][Test worker     ][   ru.innopolis.HelloWorldTest] - This is @AfterClass method1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

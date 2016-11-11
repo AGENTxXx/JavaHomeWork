@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import static ru.innopolis.ConstantClass.*;
 /**
  * Created by Alexander Chuvashov on 10.11.2016.
  */
-public class ThreadManager {
+
+/*Класс управляющий потоками*/
+public class ThreadManager implements IThreadManager {
     private static Logger logger = LoggerFactory.getLogger(ThreadManager.class);
     List<Thread> threads = new LinkedList<>();
 
@@ -54,14 +56,14 @@ public class ThreadManager {
      * @param milliseconds - интервал для задержки вывода
      * @param m - данные, которые необходимо вывести
      */
-    public void showRunStatistic(ThreadMonitor monitor,int milliseconds, Map<String, Long> m) {
+    public void showRunStatistic(int milliseconds, Map<String, Long> m) {
         Thread t = new Thread(() -> {
-            while (!monitor.isDone() && !monitor.isInterrupted()) {
+            while (!MONITOR.isDone() && !MONITOR.isInterrupted()) {
                 try {
                     Thread.sleep(milliseconds);
                     logger.info("Количество ключей в словаре {} шт.", m.size());
                 } catch (InterruptedException e) {
-                    logger.error("Ошибка прерывания потока! ",e.getStackTrace());
+                    logger.error("Ошибка прерывания потока! ",e);
                 }
             }
         }
