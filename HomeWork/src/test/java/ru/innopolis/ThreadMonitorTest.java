@@ -10,8 +10,6 @@ import static ru.innopolis.ConstantClass.*;
  * Created by Alexander Chuvashov on 11.11.2016.
  */
 public class ThreadMonitorTest {
-    private static Logger logger = LoggerFactory.getLogger(ThreadMonitorTest.class);
-
 
     @Test
     public void testSetDone() {
@@ -41,7 +39,7 @@ public class ThreadMonitorTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testErrorExeption() throws Exception {
+    public void testErrorException() throws Exception {
         throw MONITOR.getErrorExeption();
     }
 }

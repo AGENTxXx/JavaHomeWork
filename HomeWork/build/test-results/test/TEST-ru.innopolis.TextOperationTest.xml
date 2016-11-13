@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.innopolis.TextOperationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2016-11-13T11:12:07" hostname="AGENTxXx" time="0.349">
+  <properties/>
+  <testcase name="testTextWordSplit" classname="ru.innopolis.TextOperationTest" time="0.005"/>
+  <testcase name="testCheckWord" classname="ru.innopolis.TextOperationTest" time="0.338"/>
+  <testcase name="testIsExistIllegalSymbols" classname="ru.innopolis.TextOperationTest" time="0.001"/>
+  <system-out><![CDATA[log4j: Parsing for [root] with value=[ERROR, errorAppender].
+log4j: Level token is [ERROR].
+log4j: Category root set to ERROR
+log4j: Parsing appender named "errorAppender".
+log4j: Parsing layout options for "errorAppender".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} [%-5p][%-16.16t][%20c{-2}] - %m%n].
+log4j: End of parsing for "errorAppender".
+log4j: Setting property [file] to [errors.log].
+log4j: Setting property [threshold] to [ERROR].
+log4j: setFile called: errors.log, true
+log4j: setFile ended
+log4j: Parsed "errorAppender" options.
+log4j: Filter key: [log4j.appender.errorAppender.filter.a] class: [org.apache.log4j.varia.LevelMatchFilter] props: [AcceptOnMatch=true, LevelToMatch=ERROR]
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Setting property [levelToMatch] to [ERROR].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelMatchFilter] to appender named [errorAppender].
+log4j: Parsing for [ru.innopolis.FileManager] with value=[INFO, consoleAppender, infoAppender].
+log4j: Level token is [INFO].
+log4j: Category ru.innopolis.FileManager set to INFO
+log4j: Parsing appender named "consoleAppender".
+log4j: Parsing layout options for "consoleAppender".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} [%-5p][%-16.16t][%30c] - %m%n].
+log4j: End of parsing for "consoleAppender".
+log4j: Parsed "consoleAppender" options.
+log4j: Parsing appender named "infoAppender".
+log4j: Parsing layout options for "infoAppender".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} [%-5p][%-16.16t][%20c{-2}] - %m%n].
+log4j: End of parsing for "infoAppender".
+log4j: Setting property [file] to [info.log].
+log4j: setFile called: info.log, true
+log4j: setFile ended
+log4j: Parsed "infoAppender" options.
+log4j: Handling log4j.additivity.ru.innopolis.FileManager=[null]
+log4j: Parsing for [ru.innopolis.Main] with value=[INFO, consoleAppender, infoAppender].
+log4j: Level token is [INFO].
+log4j: Category ru.innopolis.Main set to INFO
+log4j: Parsing appender named "consoleAppender".
+log4j: Appender "consoleAppender" was already parsed.
+log4j: Parsing appender named "infoAppender".
+log4j: Appender "infoAppender" was already parsed.
+log4j: Handling log4j.additivity.ru.innopolis.Main=[null]
+log4j: Parsing for [ru.innopolis.ThreadManager] with value=[INFO, consoleAppender].
+log4j: Level token is [INFO].
+log4j: Category ru.innopolis.ThreadManager set to INFO
+log4j: Parsing appender named "consoleAppender".
+log4j: Appender "consoleAppender" was already parsed.
+log4j: Handling log4j.additivity.ru.innopolis.ThreadManager=[null]
+log4j: Finished configuring.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

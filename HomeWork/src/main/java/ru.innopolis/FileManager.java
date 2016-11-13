@@ -107,6 +107,9 @@ public class FileManager implements Runnable {
         }
     }
 
+    /**
+     * Метод запускаемый в новых созданных потоках, отвечаемый за вычисления в программе
+     */
     @Override
     public void run() {
         logger.info("Поток с номером {} запустился!",threadNum);

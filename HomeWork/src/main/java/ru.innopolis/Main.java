@@ -15,7 +15,7 @@ public class Main {
 
     /*Храним количество повторений слов в проверяемых файлах*/
     static Map<String, Long> m = new ConcurrentHashMap<>();
-    private static Logger logger = LoggerFactory.getLogger("ru.innopolis.Main");
+    private static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args)  {
         ThreadManager threadManager = new ThreadManager();
@@ -29,12 +29,12 @@ public class Main {
             threadManager.addThread(new Thread(new FileManager(arg)));
         }
 
-        threadManager.runAllThreads();
-        threadManager.showRunStatistic(5000,m);
+        threadManager.showRunStatistic(100,m);
+
         try {
-            threadManager.waitEndThreads();
+            threadManager.runAllThreads();
         } catch (InterruptedException e) {
-            logger.error("Ошибка прерывания потока!", e);
+            logger.error("Trace \r\n {}",MONITOR.getErrorExeption());
         }
 
         if (MONITOR.isInterrupted()) {

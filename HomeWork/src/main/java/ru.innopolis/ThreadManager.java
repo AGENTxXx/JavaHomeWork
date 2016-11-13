@@ -3,9 +3,15 @@ package ru.innopolis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import static ru.innopolis.ConstantClass.*;
 /**
  * Created by Alexander Chuvashov on 10.11.2016.
@@ -14,6 +20,7 @@ import static ru.innopolis.ConstantClass.*;
 /*Класс управляющий потоками*/
 public class ThreadManager implements IThreadManager {
     private static Logger logger = LoggerFactory.getLogger(ThreadManager.class);
+    private ExecutorService service;
     List<Thread> threads = new LinkedList<>();
 
     /**
@@ -25,30 +32,17 @@ public class ThreadManager implements IThreadManager {
     }
 
     /**
-     * Метод запускает все добавленные потоки
-     */
-    public void runAllThreads() {
-        for(Thread thread: threads) {
-            thread.start();
-        }
-    }
-
-    /**
-     * Метод запускает поток с указанным индексом
-     * @param i - индекс потока
-     */
-    public void runThread(int i) {
-        threads.get(i).start();
-    }
-
-    /**
-     * Метод позволяет подождать завершение всех потоков
+     * Метод запускает все добавленные потоки и ожидает их завершение
      * @throws InterruptedException
      */
-    public void waitEndThreads() throws InterruptedException {
+    public void runAllThreads() throws InterruptedException {
+        service = Executors.newFixedThreadPool(threads.size());
+        List<Callable<Object>> todo = new ArrayList<>(threads.size());
         for(Thread thread: threads) {
-            thread.join();
+            todo.add(Executors.callable(thread));
         }
+        service.invokeAll(todo);
+        service.shutdown();
     }
 
     /**

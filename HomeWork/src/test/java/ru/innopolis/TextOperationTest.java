@@ -16,12 +16,12 @@ public class TextOperationTest {
     TextOperation textOperation = new TextOperation();
 
     @Test
-    public void testCheckWord() throws Exception {
+    public void testCheckWord() {
         assertTrue(textOperation.checkWord("истина") == true);
     }
 
     @Test
-    public void testTextWordSplit() throws Exception {
+    public void testTextWordSplit() {
         String s = "делим строку на отдельные слова";
         List list = new LinkedList<> (Arrays.asList(s.replaceAll("[\n\r\t]"," ").split(" ")));
         assertEquals(textOperation.textWordSplit(s),list);
@@ -29,8 +29,12 @@ public class TextOperationTest {
     }
 
     @Test
-    public void testIsExistIllegalSymbols() throws Exception {
+    public void testIsExistIllegalSymbolsTrue() {
         assertTrue(textOperation.isExistIllegalSymbols("строка содержит bad символы") == true);
+    }
+
+    @Test
+    public void testIsExistIllegalSymbolsFalse() {
         assertTrue(textOperation.isExistIllegalSymbols("эта строка корректна") == false);
     }
 }
