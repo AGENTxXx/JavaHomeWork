@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <welcome-file-list>
+        <welcome-file>start</welcome-file>
+    </welcome-file-list>
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <servlet-class>ru.innopolis.StartPageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/start</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>articleList</servlet-name>
+        <servlet-class>ru.innopolis.ArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>articleList</servlet-name>
+        <url-pattern>/articleList</url-pattern>
+    </servlet-mapping>
+
+
+
+    <servlet>
+        <servlet-name>article</servlet-name>
+        <servlet-class>ru.innopolis.ArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>article</servlet-name>
+        <url-pattern>/articleList/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>myArticle</servlet-name>
+        <servlet-class>ru.innopolis.ArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>myArticle</servlet-name>
+        <url-pattern>/myArticles</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>myArticleEdit</servlet-name>
+        <servlet-class>ru.innopolis.ArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>myArticleEdit</servlet-name>
+        <url-pattern>/myArticles/edit/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>api</servlet-name>
+        <servlet-class>ru.innopolis.AjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>api</servlet-name>
+        <url-pattern>/api</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>profileEdit</servlet-name>
+        <servlet-class>ru.innopolis.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>profileEdit</servlet-name>
+        <url-pattern>/profileEdit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>createArticle</servlet-name>
+        <servlet-class>ru.innopolis.ArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createArticle</servlet-name>
+        <url-pattern>/createArticle</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error404.jsp</location>
+    </error-page>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+</web-app>
