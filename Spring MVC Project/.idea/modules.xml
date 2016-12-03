@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Spring MVC Project.iml" filepath="$PROJECT_DIR$/.idea/modules/Spring MVC Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Spring_MVC_Project_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Spring_MVC_Project_main.iml" group="Spring MVC Project" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Spring_MVC_Project_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Spring_MVC_Project_test.iml" group="Spring MVC Project" />
+    </modules>
+  </component>
+</project>
