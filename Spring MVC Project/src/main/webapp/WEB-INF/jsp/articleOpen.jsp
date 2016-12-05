@@ -9,7 +9,18 @@
 </head>
 <body>
 
+<%
+  if (request.getAttribute("user") != null) {
+%>
 <jsp:include page="headerAuth.jsp" />
+<%
+}
+else {
+%>
+<jsp:include page="header.jsp" />
+<%
+  }
+%>
 <div style="padding:10px;">
   <h2><c:out value="${article.title}"/></h2>
   <div>

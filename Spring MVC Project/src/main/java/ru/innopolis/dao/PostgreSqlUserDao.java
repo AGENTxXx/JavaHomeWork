@@ -57,7 +57,9 @@ public class PostgreSqlUserDao implements IUserDao {
 
             }
             catch (SQLException e) {
-                throw new SQLException("Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage());
+                String err = "Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage();
+                logger.error(err);
+                throw new SQLException(err);
             }
         }
         return 0;
@@ -82,7 +84,9 @@ public class PostgreSqlUserDao implements IUserDao {
 
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими данными login:" + login  + ", password:" + password  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими данными login:" + login  + ", password:" + password  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -109,7 +113,9 @@ public class PostgreSqlUserDao implements IUserDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -122,7 +128,9 @@ public class PostgreSqlUserDao implements IUserDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -134,7 +142,9 @@ public class PostgreSqlUserDao implements IUserDao {
             return stm.executeUpdate(sql);
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -146,7 +156,9 @@ public class PostgreSqlUserDao implements IUserDao {
             return stm.executeUpdate(sql);
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -163,7 +175,9 @@ public class PostgreSqlUserDao implements IUserDao {
             return users;
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 }

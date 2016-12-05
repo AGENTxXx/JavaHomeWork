@@ -65,7 +65,7 @@ public class UserService implements IUserService {
         try {
             result = this.userDao.createUser(user);
         } catch (SQLException e) {
-            e.printStackTrace();
+            result = -1;
         }
         return result;
     }

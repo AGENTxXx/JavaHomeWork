@@ -4,7 +4,7 @@
 <div id="article_<%=article.getId()%>" class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title">
-      <a href="/MyApp/article/<%=article.getId()%>"><%=article.getTitle()%></a>
+      <a href="/MyApp/articles/<%=article.getId()%>"><%=article.getTitle()%></a>
     </h3>
   </div>
   <div class="panel-body">

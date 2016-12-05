@@ -47,7 +47,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
 
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими данными" + article  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими данными " + article  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -62,7 +64,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             return new Article(rs.getInt(1),rs.getInt(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getBoolean(8),rs.getBoolean(9));
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими articleId" + articleId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими articleId: " + articleId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -74,7 +78,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими articleId" + articleId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими articleId: " + articleId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -91,7 +97,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими данными " + article  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими данными " + article  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -114,7 +122,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
 
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими userId " + userId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
 
         logger.info("User articles reviced!");
@@ -135,7 +145,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             }
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
 
         logger.info("Last articles reviced!");
@@ -158,7 +170,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             }
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " с текстом поиска: " + searchText + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " с текстом поиска: " + searchText + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
         logger.info("Find articles method is done!");
         return articles;
@@ -174,7 +188,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими articleId " + articleId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими articleId: " + articleId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 
@@ -187,7 +203,9 @@ public class PostgreSqlArticleDao implements IArticleDao {
             return stm.executeUpdate();
         }
         catch (SQLException e) {
-            throw new SQLException("Запрос " + sql + " со следующими articleId " + articleId  + " завершился с ошибкой: " + e.getMessage());
+            String err = "Запрос " + sql + " со следующими articleId: " + articleId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new SQLException(err);
         }
     }
 }

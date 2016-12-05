@@ -1,13 +1,10 @@
-package ru.innopolis.tesdt;
+package ru.innopolis.test;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.innopolis.dao.PostgreSqlUserDao;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadFactory;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static ru.innopolis.config.Constants.closeAllTags;
 
@@ -17,9 +14,10 @@ import static ru.innopolis.config.Constants.closeAllTags;
 public class Main {
     public static int LOOP_COUNT = 1_000_000;
 
-
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException {
+        logger.info("Info test!");
         /*
         List<String> list = new ArrayList<>();
         for(int i = 0; i < LOOP_COUNT; i++) {
@@ -32,6 +30,7 @@ public class Main {
         System.out.println(list.size());
         */
 
+        /*
         String text = "<h4 class=\"h4\">How to create Singleton design pattern?</h4>\n" +
                 "<p>To create the singleton class, we need to have static member of class, private constructor and static factory method.</p>\n" +
                 "\n" +
@@ -41,7 +40,7 @@ public class Main {
 
         System.out.println(closeAllTags(text, text.length()));
 
-
+    */
 
         /*
         Regex rx = new Regex("^<.*>\\b");

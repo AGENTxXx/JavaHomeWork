@@ -201,7 +201,7 @@ public class ArticleController {
     }
 
 
-    @RequestMapping(value = {"/article/{id}"})
+    @RequestMapping(value = {"/articles/{id}"})
     public String getArticle(Model model, HttpServletRequest req, @PathVariable("id") int articleId) throws SQLException {
         HttpSession session = req.getSession(false);
         if (session != null) {

@@ -22,8 +22,9 @@ public class AuthFilter implements Filter {
 
 
         String url = req.getServletPath();
+        String[] path = url.split("/");
 
-        if ("/user/auth".equals(url) || "/user/create".equals(url)) {
+        if ("/user/auth".equals(url) || "/user/create".equals(url) || "articles".equals(path[1])) {
             chain.doFilter(request, response);
             return;
         }
