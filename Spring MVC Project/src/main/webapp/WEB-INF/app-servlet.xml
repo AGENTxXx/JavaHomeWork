@@ -10,12 +10,11 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
     <context:annotation-config/>
-    <context:component-scan base-package="ru.innopolis.controllers"/>
+    <context:component-scan base-package="ru.innopolis"/>
     <mvc:resources mapping="/resources/**" location="/resources/" />
 
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"></bean>
-
 
     <bean id="articleDao" class="ru.innopolis.dao.PostgreSqlArticleDao">
     </bean>

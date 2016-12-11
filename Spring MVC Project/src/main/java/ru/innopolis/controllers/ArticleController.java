@@ -7,11 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import ru.innopolis.exception.ServiceHandlerException;
 import ru.innopolis.models.Article;
 import ru.innopolis.models.User;
 import ru.innopolis.services.ArticleService;
+import ru.innopolis.services.UserService;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
@@ -33,6 +34,16 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    /*Сервис для работы с пользователями*/
+    private UserService userService;
+
+    /*Инициализация сервиса*/
+    @Autowired(required = true)
+    @Qualifier(value = "userService")
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
 
     /**
      * Метод отвечающий за сохранения новой статьи в БД
@@ -42,16 +53,24 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/create", method = {RequestMethod.POST })
-    public String createArticleInDB(Model model, HttpServletRequest req) throws SQLException {
+    public String createArticleInDB(Model model, HttpServletRequest req) {
 
-        int userId = ((User)req.getAttribute("user")).getId();
         String title = req.getParameter("title");
         String content = req.getParameter("content");
-        int articleId = this.articleService.createArticle(new Article(userId, title, content));
-        String result ="{\"success\" : false, \"method\":\"create\"}";
-        if (articleId > 0) {
-            result ="{\"success\" : true, \"method\":\"create\", \"article_id\":" + articleId + "}";
+        int articleId = 0;
+        String result ="";
+        try {
+            User user = this.userService.getUserByUsername(req.getAttribute("username").toString());
+            articleId = this.articleService.createArticle(new Article(user.getId(), title, content));
+            if (articleId > 0) {
+                result ="{\"success\" : true, \"method\":\"create\", \"article_id\":" + articleId + "}";
+            } else {
+                result ="{\"success\" : false, \"method\":\"create\", \"error\":\"Ошибка полученных данных\"}";
+            }
+        } catch (ServiceHandlerException e) {
+            result ="{\"success\" : false, \"method\":\"create\", \"error\":\"Сервис временно не доступен. Попробуйте позже\"}";
         }
+
         model.addAttribute("result", result);
         return "ajaxResult";
     }
@@ -64,9 +83,9 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/create", method = {RequestMethod.GET })
-    public String createArticle(Model model, HttpServletRequest req) throws SQLException {
+    public String createArticle(Model model, HttpServletRequest req) {
 
-        model.addAttribute("user", req.getAttribute("user"));
+        //model.addAttribute("user", req.getAttribute("username"));
         return "articleCreate";
     }
 
@@ -79,15 +98,24 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/update/{id}", method = {RequestMethod.POST })
-    public String updateArticleInDB(Model model, HttpServletRequest req, @PathVariable("id") int articleId ) throws SQLException {
-        User user = (User)req.getAttribute("user");
+    public String updateArticleInDB(Model model, HttpServletRequest req, @PathVariable("id") int articleId ) {
+        //User user = (User)req.getAttribute("user");
+
+
         String title = req.getParameter("title");
         String content = req.getParameter("content");
-        Article article = new Article(articleId, user.getId(), title, content);
 
-        String result ="{\"success\" : false, \"method\":\"update\"}";
-        if (this.articleService.updateArticle(article) > 0) {
-            result ="{\"success\" : true, \"method\":\"update\", \"articleId\":" + articleId + "}";
+        String result ="";
+        try {
+            User user = this.userService.getUserByUsername(req.getAttribute("username").toString());
+            Article article = new Article(articleId, user.getId(), title, content);
+            if (this.articleService.updateArticle(article) > 0) {
+                result ="{\"success\" : true, \"method\":\"update\", \"articleId\":" + articleId + "}";
+            } else {
+                result ="{\"success\" : false, \"method\":\"update\", \"error\":\"Ошибка полученных данных\"}";
+            }
+        } catch (ServiceHandlerException serviceHandlerException) {
+            result ="{\"success\" : false, \"method\":\"update\", \"error\":\"Сервис временно не доступен. Попробуйте позже\"}";
         }
         model.addAttribute("result", result);
         return "ajaxResult";
@@ -101,9 +129,15 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/update/{id}", method = {RequestMethod.GET })
-    public String updateArticle(Model model, @PathVariable("id") int articleId ) throws SQLException {
-        Article article = this.articleService.getArticle(articleId);
-        model.addAttribute("article", article);
+    public String updateArticle(Model model, @PathVariable("id") int articleId ) {
+        Article article = null;
+        try {
+            article = this.articleService.getArticle(articleId);
+            model.addAttribute("article", article);
+        } catch (ServiceHandlerException serviceHandlerException) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+        }
+
         return "articleUpdate";
     }
 
@@ -115,11 +149,19 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/moderation/{id}", method = {RequestMethod.POST })
-    public String moderationArticle(Model model, @PathVariable("id") int articleId ) throws SQLException {
-        int answer = this.articleService.moderationArticle(articleId);
-        String result ="{\"success\" : false, \"method\":\"moderation\"}";
-        if (answer > 0) {
-            result ="{\"success\" : true, \"method\":\"moderation\", \"articleId\":" + articleId + "}";
+    public String moderationArticle(Model model, @PathVariable("id") int articleId ) {
+        int answer = 0;
+        String result ="";
+        try {
+            answer = this.articleService.moderationArticle(articleId);
+            if (answer > 0) {
+                result ="{\"success\" : true, \"method\":\"moderation\", \"articleId\":" + articleId + "}";
+            }
+            else {
+                result ="{\"success\" : false, \"method\":\"moderation\", \"error\":\"Ошибка полученных данных\"}";
+            }
+        } catch (ServiceHandlerException serviceHandlerException) {
+            result ="{\"success\" : false, \"method\":\"update\", \"error\":\"Сервис временно не доступен. Попробуйте позже\"}";
         }
 
         model.addAttribute("result", result);
@@ -134,10 +176,17 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping("/articles/current")
-    public String userArticles(Model model, HttpServletRequest req ) throws SQLException {
-        User user = (User)req.getAttribute("user");
-        List<Article> articles = this.articleService.getAllUserArticle(user.getId());
-        model.addAttribute("articles", articles);
+    public String userArticles(Model model, HttpServletRequest req ) {
+        //User user = (User)req.getAttribute("user");
+
+        List<Article> articles = null;
+        try {
+            User user = this.userService.getUserByUsername(req.getAttribute("username").toString());
+            articles = this.articleService.getAllUserArticle(user.getId());
+            model.addAttribute("articles", articles);
+        } catch (ServiceHandlerException serviceHandlerException) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+        }
         model.addAttribute("edit", true);
         return "articleList";
     }
@@ -150,11 +199,17 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = "/article/remove/{id}", method = {RequestMethod.POST })
-    public String removeArticle(Model model, @PathVariable("id") int articleId) throws SQLException {
+    public String removeArticle(Model model, @PathVariable("id") int articleId, HttpServletRequest req) {
+
 
         String result ="{\"success\" : false, \"method\":\"remove\"}";
-        if (this.articleService.removeArticle(articleId) > 0) {
-            result ="{\"success\" : true, \"method\":\"remove\", \"articleId\":" + articleId + "}";
+        try {
+            User user = this.userService.getUserByUsername(req.getAttribute("username").toString());
+            if (this.articleService.removeArticle(articleId, user) > 0) {
+                result ="{\"success\" : true, \"method\":\"remove\", \"articleId\":" + articleId + "}";
+            }
+        } catch (ServiceHandlerException serviceHandlerException) {
+            result ="{\"success\" : false, \"method\":\"remove\", \"error\":\"Сервис временно не доступен. Попробуйте позже\"}";
         }
         model.addAttribute("result", result);
         return "ajaxResult";
@@ -168,49 +223,111 @@ public class ArticleController {
      * @throws SQLException
      */
     @RequestMapping(value = { "/", "/articles" })
-    public String getLastArticles(Model model, HttpServletRequest req) throws SQLException {
+    public String getLastArticles(Model model, HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session != null) {
             model.addAttribute("user", session.getAttribute("user"));
         }
-        List<Article> articles;
-        if (req.getAttribute("search_article") != null) {
-            articles = articleService.getFindArticles(req.getAttribute("search_article").toString());
+        List<Article> articles = null;
+        try {
+            if (req.getAttribute("search_article") != null) {
+                articles = articleService.getFindArticles(req.getAttribute("search_article").toString());
+            } else {
+                articles = articleService.getLastArticles();
+            }
+            model.addAttribute("articles", articles);
+        } catch (ServiceHandlerException e) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+
         }
-        else {
-            articles = articleService.getLastArticles();
-        }
-        model.addAttribute("articles", articles);
         model.addAttribute("edit", false);
         return "articleList";
     }
 
 
     @RequestMapping(value = {"/articles"}, method = {RequestMethod.POST })
-    public String getSearchArticles(Model model, HttpServletRequest req) throws SQLException {
+    public String getSearchArticles(Model model, HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session != null) {
             model.addAttribute("user", session.getAttribute("user"));
         }
 
-        List<Article> articles = articleService.getFindArticles(req.getParameter("search_article").toString());
-        model.addAttribute("articles", articles);
-        model.addAttribute("searchArticle", req.getParameter("search_article"));
+        List<Article> articles = null;
+        try {
+            articles = articleService.getFindArticles(req.getParameter("search_article"));
+            model.addAttribute("articles", articles);
+            model.addAttribute("searchArticle", req.getParameter("search_article"));
+        } catch (ServiceHandlerException serviceHandlerException) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+        }
         model.addAttribute("edit", false);
         return "articleList";
     }
 
 
     @RequestMapping(value = {"/articles/{id}"})
-    public String getArticle(Model model, HttpServletRequest req, @PathVariable("id") int articleId) throws SQLException {
+    public String getArticle(Model model, HttpServletRequest req, @PathVariable("id") int articleId) {
         HttpSession session = req.getSession(false);
         if (session != null) {
             model.addAttribute("user", session.getAttribute("user"));
         }
 
-        Article article = articleService.getArticle(articleId);
-        model.addAttribute("article", article);
+        Article article = null;
+        try {
+            article = articleService.getArticle(articleId);
+            model.addAttribute("article", article);
+        } catch (ServiceHandlerException serviceHandlerException) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+        }
         model.addAttribute("edit", false);
         return "articleOpen";
+    }
+
+
+
+    /**
+     * Метод список статей, которые необходимо отмодерировать
+     * @param model - модель передачи данных во view
+     * @param req - HttpServletRequest
+     * @return - возвращает имя view
+     * @throws SQLException
+     */
+    @RequestMapping("/admin/articles/moderation")
+    public String adminModeration(Model model, HttpServletRequest req) {
+        model.addAttribute("user", req.getAttribute("user"));
+        List<Article> articles = null;
+        try {
+            articles = articleService.getModerationArticle();
+            model.addAttribute("articles", articles);
+        } catch (ServiceHandlerException serviceHandlerException) {
+            model.addAttribute("error", "Сервер вернул ошибку. Попробуйте повторить попытку позже");
+        }
+        return "articleListManager";
+    }
+
+    /**
+     * Метод список статей, которые необходимо отмодерировать
+     * @param model - модель передачи данных во view
+     * @param req - HttpServletRequest
+     * @return - возвращает имя view
+     * @throws SQLException
+     */
+    @RequestMapping("/admin/article/publish/{id}")
+    public String adminArticlePublish(Model model, HttpServletRequest req, @PathVariable("id") int articleId) {
+        String result ="{\"success\" : false, \"method\":\"remove\"}";
+        int answer = 0;
+        try {
+            answer = this.articleService.publishArticle(articleId);
+            if (answer > 0) {
+                result ="{\"success\" : true, \"method\":\"publish\", \"articleId\":" + articleId + "}";
+            }
+            else {
+                result ="{\"success\" : false, \"method\":\"publish\", \"error\":\"Ошибка полученных данных\"}";
+            }
+        } catch (ServiceHandlerException serviceHandlerException) {
+            result ="{\"success\" : false, \"method\":\"publish\", \"error\":\"Сервис временно не доступен. Попробуйте позже\"}";
+        }
+        model.addAttribute("result", result);
+        return "ajaxResult";
     }
 }

@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.innopolis.dao.PostgreSqlUserDao;
 
+import java.io.FilterInputStream;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static ru.innopolis.config.Constants.closeAllTags;
 
@@ -16,7 +19,25 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws InterruptedException {
+    private final int i = 3;
+
+    HashSet d;
+    public Main() {
+        int a = new Integer(1);
+    }
+
+
+    public static void main(String... args) throws InterruptedException {
+
+        int a = 128;
+        byte b = (byte)a;
+        a = -127;
+        b = (byte)a;
+        byte v = 3;
+        byte g = 5;
+        Object c = v + g;
+        System.out.println(c.getClass());
+        System.out.println(-0b111111>>>1);
         logger.info("Info test!");
         /*
         List<String> list = new ArrayList<>();
@@ -75,4 +96,127 @@ public class Main {
         }
         return list;
     }
+}
+
+
+class Superclass {
+    public int field;
+    public int getField() { return field; }
+    public void setField(int value) { field = value; }
+}
+
+class Subclass extends Superclass{
+    public int field;
+    public int getField() { return field; }
+    public void setField(int value) { field = value; }
+    public static void main(String[] params) {
+        Superclass sup = new Subclass();
+        sup.field = 10;
+        System.out.println(sup.getField());
+        int x = 0xFFD;
+    }
+}
+
+class N implements n1,n12 {
+
+    @Override
+    public int mm() {
+        return 5;
+    }
+}
+
+interface n1 {
+    default int mm() {
+        return 4;
+    }
+}
+
+interface n12 {
+    default int mm() {
+        return 6;
+    }
+}
+
+class LambdaTest {
+    public static void main(String[] args) {
+        //new Thread(()-> System.out.println("1")).start();
+        /*
+        int i =0;
+
+        test(() -> {
+            System.out.println(i); //Но можем передать ссылку и ниже работать с тем же объектом
+        });
+
+        i = 10;
+        */
+
+        /*
+        test(new FunctionalInterface() {
+            @Override
+            public void doSome() {
+                System.out.println("SUCCESS");
+            }
+        });
+        */
+
+        //Testt t = new Testt();
+
+        /*test(new FunctionalInterface() {
+            Testt delegate = new Testt();
+            @Override
+            public void doSome() {
+                delegate.print();
+            }
+        });*/
+
+        /*
+        Predicate p;
+        Function f;
+
+        test((s2) -> {
+            t.print(s2);
+        });
+
+        test(t::print);
+        */
+
+        Collection<Integer> collection
+                = Arrays.asList(new Integer[]{1,2,3,4,5,6});
+
+        Integer val = collection.stream().filter((arg)->arg % 2 != 0).reduce((s1,s2)->s1+s2).orElse(0);
+
+        int count=0;
+        for(Integer i :collection) {
+            count +=(i%2 == 0) ? i:0;
+            if (i%2 == 0) {
+                count+=i;
+            }
+        }
+
+        System.out.println(val);
+    }
+
+    public static void test(FunctionalInterface functionalInterface) {
+        functionalInterface.doSome("ddd");
+    }
+}
+
+class Testt {
+    void print(String s) {
+        System.out.println(s);
+    }
+}
+
+@java.lang.FunctionalInterface
+interface FunctionalInterface {
+    void doSome(String s);
+
+    int hashCode();
+
+    default void doSomeDefault() {
+        int i = hashCode();
+        System.out.println(i);
+    }
+
+    //void someElseAbstract();
 }

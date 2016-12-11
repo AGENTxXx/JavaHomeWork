@@ -13,7 +13,7 @@
     </p>
       <% if ((boolean)request.getAttribute("edit")) { %>
         <div style="margin-bottom: 10px;">
-          <% if (!article.getModeration()) { %>
+          <% if (!article.getIsModeration()) { %>
             <button id="moderation_btn_<%=article.getId()%>" class="btn btn-success" type="button" onclick="articleModeration(<%=article.getId()%>)">Отправить на модерацию</button>
           <%} %>
           <a href="/MyApp/article/update/<%=article.getId()%>">
@@ -21,9 +21,9 @@
           </a>
           <button class="btn btn-danger" type="button" onclick="removeArticle(<%=article.getId()%>)">Удалить</button>
         </div>
-      <% if (article.getChecking()) { %>
+      <% if (article.getIsPublish()) { %>
       <span id="label_<%=article.getId()%>" class="label label-success">Опубликована!</span>
-      <% } else if (article.getModeration()) { %>
+      <% } else if (article.getIsModeration()) { %>
       <span id="label_<%=article.getId()%>" class="label label-primary">Ждёт проверки модератором</span>
       <% } else { %>
       <span id="label_<%=article.getId()%>" class="label label-warning">В режиме создания</span>

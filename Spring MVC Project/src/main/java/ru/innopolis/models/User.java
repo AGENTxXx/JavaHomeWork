@@ -12,7 +12,7 @@ public class User {
     private String email;
     private String login;
     private String password;
-    private boolean locked;
+    private boolean isLocked;
 
     public void setId(int id) {
         this.id = id;
@@ -38,17 +38,25 @@ public class User {
         return login;
     }
 
-    public boolean isLocked() {
-        return locked;
+    public void setIsLocked(boolean isLocked) {
+        this.isLocked = isLocked;
     }
 
-    public User(int id, String firstname, String lastname, String email, String login, boolean locked) {
+    public boolean getIsLocked() {
+        return isLocked;
+    }
+
+    public User(String login) {
+        this.login = login;
+    }
+
+    public User(int id, String firstname, String lastname, String email, String login, boolean isLocked) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.login = login;
-        this.locked = locked;
+        this.isLocked = isLocked;
     }
 
     public User(int id, String firstname, String lastname, String email, String password) {
@@ -82,7 +90,7 @@ public class User {
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", login='" + login + '\'' +
-                ", locked=" + locked +
+                ", isLocked=" + isLocked +
                 '}';
     }
 
@@ -92,5 +100,12 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

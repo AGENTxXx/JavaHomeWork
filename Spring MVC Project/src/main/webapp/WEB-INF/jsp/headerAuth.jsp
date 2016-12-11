@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page import="ru.innopolis.models.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div style="background:indigo; height: 50px;" class="header">
@@ -6,7 +7,9 @@
     </div>
     <div style="margin-top: 5px;  float: right; display: inline-block; padding-right: 5px;">
         <div class="form-inline">
-            <div style="display: inline-block;color: white;"><%=((User)request.getAttribute("user")).getLogin()%></div>
+            <div style="display: inline-block;color: white;">
+                <sec:authentication property="principal.username" />
+            </div>
             <a href="/MyApp/user/profile">
                 <button class="btn btn-primary" type="button" >Редактировать профиль</button>
             </a>

@@ -2,72 +2,84 @@ package ru.innopolis.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.innopolis.models.EArticle;
+import ru.innopolis.models.EUser;
+import ru.innopolis.models.EUserRole;
 import ru.innopolis.models.User;
 
 import javax.naming.NamingException;
+import javax.persistence.*;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
-
-import static ru.innopolis.config.Constants.*;
 
 /**
  * Created by Alexander Chuvashov on 28.11.2016.
  */
 public class PostgreSqlUserDao implements IUserDao {
-    private final Connection connection;
+
+    EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("postgres");
+
     private static final Logger logger = LoggerFactory.getLogger(PostgreSqlUserDao.class);
 
-    public PostgreSqlUserDao(Connection connection) {
-        this.connection = connection;
-    }
-
-
-    public PostgreSqlUserDao() throws SQLException, NamingException {
-        this.connection = DB.getInstance().getConnection();
-        logger.info("Connection created!");
-    }
 
     @Override
-    public int createUser(User user) throws SQLException {
+    public int createUser(User user) {
+        EntityManager entityManager = emfactory.createEntityManager();
 
-        if (user.getLogin().length() > 0 && user.getPassword().length() > 0 && user.getEmail().length() > 0 && user.getFirstname().length() > 0 && user.getLastname().length() > 0) {
-            String sql = "SELECT id FROM USERS WHERE login = ?";
-            try(PreparedStatement stm = connection.prepareStatement(sql)) {
-                stm.setString(1,user.getLogin());
-                try (ResultSet rs = stm.executeQuery()) {
-                    if (rs.next()) {
-                        return -1;
-                    }
-                }
+        int id = 0;
+        String SQL = "SELECT id FROM EUser WHERE login = :login";
 
+        try {
+            Query query = entityManager.createQuery(SQL).setParameter("login",user.getLogin()).setMaxResults(1);
+    
+            List result = query.getResultList();
+    
+            if (!result.isEmpty()) {
+                return -1;
             }
-            sql = "INSERT INTO USERS (firstname, lastname, email, login, password, locked) VALUES(?,?,?,?,?,false) RETURNING id";
-            try(PreparedStatement stm = connection.prepareStatement(sql)) {
-                stm.setString(1,user.getFirstname());
-                stm.setString(2,user.getLastname());
-                stm.setString(3,user.getEmail());
-                stm.setString(4,user.getLogin());
-                stm.setString(5,user.getPassword());
-                try (ResultSet rs = stm.executeQuery()) {
-                    rs.next();
-                    logger.info("User created!");
-                    return rs.getInt(1);
-                }
+            
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            EUser eUser = new EUser(user.getFirstname(), user.getLastname(), user.getEmail(), user.getLogin(), user.getPassword());
+            entityManager.persist(eUser);
+            EUserRole eUserRole = new EUserRole(user.getLogin(),"ROLE_USER");
+            entityManager.persist(eUserRole);
+            tx.commit();
+            id = eUser.getId();
 
-            }
-            catch (SQLException e) {
-                String err = "Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage();
-                logger.error(err);
-                throw new SQLException(err);
-            }
+        } catch (IllegalArgumentException e) {
+            String err = "Метод createUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод createUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод createUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод createUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+
+            entityManager.close();
         }
-        return 0;
+
+        return id;
+
     }
 
     @Override
-    public User authUser(String login, String password) throws SQLException {
-        String sql = "SELECT id, firstname, lastname, email, login, locked FROM USERS WHERE login = ? AND password = ? AND locked = false";
+    public User authUser(String login, String password) {
+        return null;
+        /*
+        String sql = "SELECT id, firstname, lastname, email, login, isLocked FROM USERS WHERE login = ? AND password = ? AND isLocked = false";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, login);
             stm.setString(2, password);
@@ -88,96 +100,238 @@ public class PostgreSqlUserDao implements IUserDao {
             logger.error(err);
             throw new SQLException(err);
         }
+        */
     }
 
     @Override
-    public int updateUser(User user) throws SQLException {
-        String addSql = "";
-        if (user.getPassword() != null) {
-            addSql = ", password = ?";
-        }
+    public int updateUser(User user) {
 
-        String sql = "UPDATE USERS SET firstname = ?, lastname = ?, email = ?" + addSql + " WHERE id = ?";
-        try(PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setString(1,user.getFirstname());
-            stm.setString(2,user.getLastname());
-            stm.setString(3,user.getEmail());
-            if (user.getPassword() != null && user.getPassword().length() > 0) {
-                stm.setString(4,user.getPassword());
-                stm.setInt(5,user.getId());
+        EntityManager entityManager = emfactory.createEntityManager();
+        try {
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
             }
-            else {
-                stm.setInt(4,user.getId());
+            EUser eUser = entityManager.find(EUser.class, user.getId());
+            eUser.setFirstname(user.getFirstname());
+            eUser.setLastname(user.getLastname());
+            eUser.setEmail(user.getEmail());
+            if (user.getPassword() != null) {
+                eUser.setPassword(user.getPassword());
             }
-            logger.info("User updated!");
-            return stm.executeUpdate();
-        }
-        catch (SQLException e) {
-            String err = "Запрос " + sql + " со следующими данными" + user  + " завершился с ошибкой: " + e.getMessage();
+    
+            entityManager.persist(eUser);
+            tx.commit();
+        } catch (IllegalArgumentException e) {
+            String err = "Метод updateUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
             logger.error(err);
-            throw new SQLException(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод updateUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод updateUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод updateUser со следующими user: " + user  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+            entityManager.close();
         }
+
+        return 1;
     }
 
     @Override
-    public int removeUser(int userId) throws SQLException {
-        String sql = "DELETE USERS WHERE user_id = ?";
-        try(PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setInt(1,userId);
-            logger.info("User removed!");
-            return stm.executeUpdate();
-        }
-        catch (SQLException e) {
-            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+    public int removeUser(int userId) {
+
+        EntityManager entityManager = emfactory.createEntityManager();
+        
+        try {
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            EUser eUser = entityManager.find(EUser.class, userId);
+            entityManager.remove(eUser);
+            tx.commit();
+        } catch (IllegalArgumentException e) {
+            String err = "Метод removeUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
             logger.error(err);
-            throw new SQLException(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод removeUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод removeUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод removeUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+            entityManager.close();
         }
+
+        return 1;
+
     }
 
     @Override
-    public int userUnlock(int userId) throws SQLException {
-        String sql = "UPDATE USERS SET locked = false WHERE user_id = "+userId;
-        try(PreparedStatement stm = connection.prepareStatement(sql)) {
-            logger.info("User unlocked!");
-            return stm.executeUpdate(sql);
-        }
-        catch (SQLException e) {
-            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+    public int userUnlock(int userId) {
+
+        EntityManager entityManager = emfactory.createEntityManager();
+        try {
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            EUser eUser = entityManager.find(EUser.class, userId);
+            eUser.setIsLocked(false);
+            entityManager.merge(eUser);
+            tx.commit();
+        } catch (IllegalArgumentException e) {
+            String err = "Метод userUnlock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
             logger.error(err);
-            throw new SQLException(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод userUnlock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод userUnlock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод userUnlock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+            entityManager.close();
         }
+
+        return 1;
     }
 
     @Override
-    public int userLock(int userId) throws SQLException {
-        String sql = "UPDATE USERS SET locked = true WHERE user_id = "+userId;
-        try(PreparedStatement stm = connection.prepareStatement(sql)) {
-            logger.info("User locked!");
-            return stm.executeUpdate(sql);
-        }
-        catch (SQLException e) {
-            String err = "Запрос " + sql + "с user_id " + userId  + " завершился с ошибкой: " + e.getMessage();
+    public int userLock(int userId) {
+
+        EntityManager entityManager = emfactory.createEntityManager();
+
+        EUser eUser = null;
+        try {
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            eUser = entityManager.find(EUser.class, userId);
+            eUser.setIsLocked(true);
+            entityManager.merge(eUser);
+            tx.commit();
+        } catch (IllegalArgumentException e) {
+            String err = "Метод userLock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
             logger.error(err);
-            throw new SQLException(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод userLock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод userLock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод userLock со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+            entityManager.close();
         }
+
+        return 1;
     }
 
     @Override
-    public List<User> getAllUsers() throws SQLException {
-        String sql = "SELECT id, firstname, lastname, email login, locked FROM USERS";
+    public List<User> getAllUsers() {
+        EntityManager entityManager = emfactory.createEntityManager();
+
         List<User> users = new LinkedList<>();
-        try(Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql)) {
-            while(rs.next()) {
-                users.add(new User(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getBoolean(6)));
+        try {
+            TypedQuery<EUser> result = entityManager.createQuery("from EUser", EUser.class);
+    
+            for (EUser user: result.getResultList()) {
+                users.add(new User(user.getId(),user.getFirstname(), user.getLastname(), user.getEmail(), user.getLogin(),user.getIsLocked()));
             }
-            logger.info("All user recived!");
-            return users;
-        }
-        catch (SQLException e) {
-            String err = "Запрос " + sql + " завершился с ошибкой: " + e.getMessage();
+        } catch (IllegalArgumentException e) {
+            String err = "Запрос from EUser метода  getAllUsers завершился с ошибкой: " + e.getMessage();
             logger.error(err);
-            throw new SQLException(err);
+            throw new IllegalArgumentException(e);
+        } finally {
+            entityManager.close();
         }
+        return users;
+
+    }
+
+    @Override
+    public User getUser(int userId) {
+        EntityManager entityManager = emfactory.createEntityManager();
+
+        EUser eUser = null;
+        try {
+            EntityTransaction tx = entityManager.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            eUser = entityManager.find(EUser.class, userId);
+            tx.commit();
+        } catch (IllegalArgumentException e) {
+            String err = "Метод getUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalArgumentException(e);
+        } catch (IllegalStateException e) {
+            String err = "Метод getUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalStateException(e);
+        } catch (RollbackException e) {
+            String err = "Метод getUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new RollbackException(e);
+        } catch (PersistenceException e) {
+            String err = "Метод getUser со следующими userId: " + userId  + " завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new PersistenceException(e);
+        } finally {
+            entityManager.close();
+        }
+
+        return new User(eUser.getId(), eUser.getFirstname(),eUser.getLastname(),eUser.getEmail(),eUser.getLogin(),eUser.getIsLocked());
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        EntityManager entityManager = emfactory.createEntityManager();
+        
+        String SQL = "from EUser where login = :username";
+        EUser eUser = null;
+
+        try {
+            TypedQuery<EUser> query = entityManager.createQuery(SQL, EUser.class).setParameter("username",username).setMaxResults(1);
+            eUser = query.getSingleResult();
+
+        } catch (IllegalArgumentException e) {
+            String err = "Запрос " + SQL + " метода  getUserByUsername завершился с ошибкой: " + e.getMessage();
+            logger.error(err);
+            throw new IllegalArgumentException(e);
+        } finally {
+            entityManager.close();
+        }
+
+        return new User(eUser.getId(),eUser.getFirstname(), eUser.getLastname(), eUser.getEmail(), eUser.getLogin(),eUser.getIsLocked());
     }
 }
