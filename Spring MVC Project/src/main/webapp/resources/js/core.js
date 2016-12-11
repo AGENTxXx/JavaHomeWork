@@ -2,13 +2,21 @@
  * Created by Administrator on 23.11.2016.
  */
 
-var prefix_url = "/MyApp/api";
+function testAuth() {
+    var query = new Object();
+    query.j_username = "admin";
+    query.j_password = "admin";
+    query.url = "/MyApp/user/login";
+    query.method = "login";
+    sendAjax(query,authAnswer,authError)
+}
+
 function sendAuthQuery() {
     var query = new Object();
-    query.login = $("#login").val();
-    query.password = $("#password").val();
-    query.url = "/MyApp/user/auth";
-    query.method = "auth";
+    query.j_username = $("#login").val();
+    query.j_password = $("#password").val();
+    query.url = "/MyApp/user/login";
+    query.method = "login";
     $(".alert").hide();
     sendAjax(query,authAnswer,authError)
 }
@@ -105,8 +113,6 @@ function articleModeration(articleId) {
     sendAjax(query,articleAnswer,errorRequest);
 }
 
-
-
 function removeArticle(articleId) {
     var query = new Object();
     query.url = "/MyApp/article/remove/" + articleId;
@@ -114,41 +120,11 @@ function removeArticle(articleId) {
     sendAjax(query,articleAnswer,errorRequest);
 }
 
-function lockUser(userId) {
-    var query = new Object();
-    query.userId = userId;
-    query.method = "lock";
-    sendAjax(query,userAnswer,errorRequest);
-}
-
-function unlockUser(userId) {
-    var query = new Object();
-    query.userId = userId;
-    query.method = "unlock";
-    sendAjax(query,userAnswer,errorRequest);
-}
-
-function deleteUser(userId) {
-    var query = new Object();
-    query.userId = userId;
-    query.method = "delete";
-    sendAjax(query,userAnswer,errorRequest);
-}
-
-function userAnswer(data, afterFunc) {
+function userAnswer(data) {
     var result = JSON.parse(data);
     if (result.success) {
         method = result.method;
         switch (method) {
-            case 'remove':
-                showMessage("Пользователь успешно удалён");
-                break;
-            case 'lock':
-                showMessage("Пользователь успешно заблокирован");
-                break;
-            case 'unlock':
-                showMessage("Пользователь успешно разблокирован");
-                break;
             case 'update':
                 $("#profile_info").text("Профиль успешно обновлён!");
                 $("#profile_info_block").removeClass('hide');
@@ -157,16 +133,12 @@ function userAnswer(data, afterFunc) {
             default:
                 break;
         }
-
-        if (afterFunc != null) {
-            afterFunc(data);
-        }
     }
 }
 
 function articleActivate(articleId) {
     var query = new Object();
-    query.userId = articleId;
+    query.articleId = articleId;
     query.method = "activate";
     sendAjax(query,articleAnswer,errorRequest);
 }

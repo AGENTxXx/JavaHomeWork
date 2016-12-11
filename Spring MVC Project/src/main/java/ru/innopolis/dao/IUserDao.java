@@ -2,26 +2,26 @@ package ru.innopolis.dao;
 
 import ru.innopolis.models.User;
 
-import javax.naming.NamingException;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
  * Created by Alexander Chuvashov on 28.11.2016.
  */
 public interface IUserDao {
-    int createUser(User user) throws SQLException;
+    int createUser(User user);
 
-    User authUser(String login, String password) throws SQLException;
+    User authUser(String login, String password);
 
-    int updateUser(User user) throws SQLException;
+    int updateUser(User user);
 
-    int removeUser(int userId) throws SQLException;
+    int removeUser(int userId);
 
-    int userUnlock(int userId) throws SQLException;
+    int userUnlock(int userId);
 
-    int userLock(int userId) throws SQLException;
+    int userLock(int userId);
 
-    List<User> getAllUsers() throws SQLException;
+    List<User> getAllUsers();
+    User getUser(int i);
 
+    User getUserByUsername(String username);
 }

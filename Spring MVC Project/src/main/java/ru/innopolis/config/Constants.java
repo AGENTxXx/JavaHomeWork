@@ -87,10 +87,10 @@ public class Constants {
         else {
             int closeTaglenght = articleText.indexOf(">", lenght);
             if (closeTaglenght > 0) {
-                cropArticle =articleText.substring(0,closeTaglenght);
+                cropArticle =articleText.substring(0,closeTaglenght+1);
             }
             else {
-                cropArticle =articleText.substring(0,lenght+1);
+                cropArticle =articleText.substring(0,lenght);
             }
 
             List<String> list = new LinkedList<>();

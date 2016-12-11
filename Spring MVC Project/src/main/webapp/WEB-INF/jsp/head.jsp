@@ -10,3 +10,4 @@
 <script src="<c:url value="/resources/js/constants.js" />"></script>
 <script src="<c:url value="/resources/js/universal_function.js" />"></script>
 <script src="<c:url value="/resources/js/core.js" />"></script>
+

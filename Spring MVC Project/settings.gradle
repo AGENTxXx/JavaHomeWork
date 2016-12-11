@@ -1,2 +1,4 @@
 rootProject.name = 'Spring MVC Project'
-
+include 'client'
+include 'server'
+include 'common'

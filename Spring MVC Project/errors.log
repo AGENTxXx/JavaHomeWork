@@ -1,0 +1,20 @@
+2016-12-10 02:01:01,302 [ERROR][main            ][hql.internal.ast.ErrorCounter] - line 1:190: unexpected token: LIMIT
+2016-12-10 02:01:01,315 [ERROR][main            ][hql.internal.ast.ErrorCounter] - line 1:190: unexpected token: LIMIT
+line 1:190: unexpected token: LIMIT
+	at org.hibernate.hql.internal.antlr.HqlBaseParser.orderElement(HqlBaseParser.java:2192)
+	at org.hibernate.hql.internal.antlr.HqlBaseParser.orderByClause(HqlBaseParser.java:1173)
+	at org.hibernate.hql.internal.antlr.HqlBaseParser.queryRule(HqlBaseParser.java:789)
+	at org.hibernate.hql.internal.antlr.HqlBaseParser.selectStatement(HqlBaseParser.java:313)
+	at org.hibernate.hql.internal.antlr.HqlBaseParser.statement(HqlBaseParser.java:195)
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.parse(QueryTranslatorImpl.java:279)
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.doCompile(QueryTranslatorImpl.java:187)
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.compile(QueryTranslatorImpl.java:142)
+	at org.hibernate.engine.query.spi.HQLQueryPlan.<init>(HQLQueryPlan.java:115)
+	at org.hibernate.engine.query.spi.HQLQueryPlan.<init>(HQLQueryPlan.java:77)
+	at org.hibernate.engine.query.spi.QueryPlanCache.getHQLQueryPlan(QueryPlanCache.java:153)
+	at org.hibernate.internal.AbstractSharedSessionContract.getQueryPlan(AbstractSharedSessionContract.java:545)
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:654)
+	at org.hibernate.internal.AbstractSessionImpl.createQuery(AbstractSessionImpl.java:23)
+	at ru.innopolis.dao.PostgreSqlArticleDao.getLastArticles(PostgreSqlArticleDao.java:207)
+	at ru.innopolis.services.ArticleService.getLastArticles(ArticleService.java:136)
+	at ru.innopolis.Main.main(Main.java:15)

@@ -76,7 +76,7 @@ public class DB {
     }
 
     /*Получение соединения*/
-    public static Connection getConnection() throws SQLException, NamingException {
+    public static Connection getConnection() throws SQLException {
         Connection con = datasource.getConnection();
         /*
         if (datasource.getConnection() != null && datasource.getConnection().isClosed() != true) {

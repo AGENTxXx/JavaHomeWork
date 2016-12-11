@@ -22,7 +22,7 @@
         {
             ed.on('init', function(evt)
             {
-                ed.setContent('<%=article.getContent()%>');
+                ed.setContent('<%=article.getContent().replaceAll("\n","<br>").replaceAll("\'","&rsquo;")%>');
             });
         }
   });
